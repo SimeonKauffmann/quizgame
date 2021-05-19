@@ -4,18 +4,19 @@ html(lang="en")
     meta(charset="UTF-8")
     meta(http-equiv="X-UA-Compatible", content="IE=edge")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
-    link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css")
+    link(rel="stylesheet", href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous")
     script(src="/socket.io/socket.io.js")
     title Awesome Quiz
   body 
     div#quiz
-      p#question= question
+      p#question
       
-      each answer, key in answers
+      button(onclick=`buttonClick("key0")` id=`key0`)
+      button(onclick=`buttonClick("key1")` id=`key1`)
+      button(onclick=`buttonClick("key2")` id=`key2`)
+      button(onclick=`buttonClick("key3")` id=`key3`)
 
-        button(onclick=`buttonClick("key${key}")` id=`key${key}` value=`${answer}`)= answer
-
-      p#username
+      h3#username
 
       p#points 0
 

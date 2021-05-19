@@ -3,6 +3,7 @@ const socket = io()
 const pointsDisplay = document.querySelector('#points')
 const buttons = document.querySelectorAll('button')
 const round = document.querySelector('#round')
+const countdownDisplay = document.querySelector('#countdown')
 const questionDisplay = document.querySelector('#question')
 const usernameDisplay = document.querySelector('#username')
 const game = document.querySelector('#quiz')
@@ -20,11 +21,13 @@ let username = names[Math.floor(Math.random()*names.length)]
 
 usernameDisplay.innerHTML = username
 
-let currentAnswer 
+
 const buttonClick = (key)=>{
   let answer = document.querySelector(`#${key}`).value
   socket.emit('answer', answer)
-  currentAnswer = answers
+  for(i=0; i< buttons.length; i++){
+    buttons[i].disabled = true
+  }
 }
 
 socket.on('timer', (countdown)=>{
@@ -34,32 +37,50 @@ socket.on('timer', (countdown)=>{
 socket.on('enterLounge', ()=>{
   game.style.display = 'none'
   socket.emit('endGame', points, username, socket.id)
-  questionNumber = 1
-  pause.style.display = 'visible'
+  questionNumber = 0
+  points = 0
+  pointsDisplay.textContent = points
+  pause.style.display = 'unset'
 })
 
 socket.on('usersScores', (users)=>{
-  for(user in users){
-    let score = document.createElement("li").appendChild(document.createTextNode(`${user.user}: ${user.points}`))
+  console.log(users[0].user)
+  for(y = 0; y < users.length; y++){
+    let score = document.createElement("li")
+    let text = document.createTextNode(`${users[y].user === username ? 'You' : users[y].user}: ${users[y].points}`)
+    score.appendChild(text)
     scoresList.appendChild(score)
   }
 })
 
 socket.on('newQuestion', (question, answers)=>{
+  for(i=0; i< buttons.length; i++){
+    buttons[i].disabled = false
+  }
+
   pause.style.display = 'none'
-  game.style.display = 'visible'
+  game.style.display = 'unset'
   questionDisplay.innerHTML = question
-  scoresList.innerHTML = ''
+  
+  while (scoresList.firstChild) {
+    scoresList.removeChild(scoresList.firstChild);
+  }
 
   for(x = 0; x < buttons.length; x++){
     buttons[x].value = answers[x]
-    buttons[x].textContent = answers[x]
+    buttons[x].textContent = decodeHTML(answers[x])
     buttons[x].style.backgroundColor = ''
   }
 
   questionNumber += 1
   round.innerHTML = `This is question ${questionNumber} out of 3`
 })
+
+function decodeHTML(html) {
+  var txt = document.createElement("textarea");
+  txt.innerHTML = html;
+  return txt.value;
+}
 
 
 socket.on('checkAnswer', (right, correctAnswer) => {

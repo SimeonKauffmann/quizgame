@@ -17,7 +17,6 @@ let currentQuestion
 
 startUp = (async () => await db.find())().then(dbQuestions => {
   questions = dbQuestions
-  currentQuestion = pickaQuestion(questions)
 })
 
 
@@ -35,29 +34,31 @@ app.get('/quiz', (req, res) => {
     res.redirect('/')
   }
   currentQuestion = pickaQuestion(questions)
-  res.status(200).render('quiz.pug', {question: currentQuestion.question, answers: currentQuestion.answers})
+  res.status(200).render('quiz.pug')
 })
 
 app.get('/', (req, res)=>{
-  res.status(200).render('lounge.pug', {users : users})
+  res.status(200).render('lounge.pug')
 })
 
 
 
 
 io.of('/quiz').on('connection', (socket)=>{
-
   socket.leave('lounge')
   socket.join('playRoom')
   
 })
 
-let users = []
+const users = []
 
 io.of('/').on("connection", (socket)=>{
   socket.leave('playRoom')
   socket.join('lounge')
-  users = []
+  users.length = 0
+
+  currentQuestion = pickaQuestion(questions)
+  io.emit('newQuestion', currentQuestion.question, currentQuestion.answers)
 
   socket.on('answer', (answer)=>{
     if (answer === currentQuestion.correct_answer) return socket.emit('checkAnswer', true, currentQuestion.correct_answer)
@@ -66,12 +67,19 @@ io.of('/').on("connection", (socket)=>{
 
   socket.on('endGame', (points, username, id)=>{
     users.push({user: username, points: points, id: id})
-    socket.emit('usersScores', users)
+    setTimeout(()=>{ 
+      socket.broadcast.emit('usersScores', users) 
+      socket.emit('usersScores', users) 
+      users.length = 0
+    }, 200)
+    
   })
   
 })
 
 let countdown = 5
+
+
 setInterval(()=>{
   io.to('lounge').emit('timer', countdown)
   countdown -= 1
@@ -88,8 +96,9 @@ setInterval(()=>{
   }
   if(countdown === 0){
     io.emit('enterPlayRoom')
-    io.emit('newQuestion', currentQuestion.question, currentQuestion.answers)
     countdown = 20
+    currentQuestion = pickaQuestion(questions)
+    io.emit('newQuestion', currentQuestion.question, currentQuestion.answers)
   }
 }, 1000)
 
