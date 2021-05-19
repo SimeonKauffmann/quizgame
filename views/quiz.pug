@@ -1,0 +1,31 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(http-equiv="X-UA-Compatible", content="IE=edge")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css")
+    script(src="/socket.io/socket.io.js")
+    title Awesome Quiz
+  body 
+    div#quiz
+      p#question= question
+      
+      each answer, key in answers
+
+        button(onclick=`buttonClick("key${key}")` id=`key${key}` value=`${answer}`)= answer
+
+      p#username
+
+      p#points 0
+
+      p#round This is question 1 of 3
+
+    div#pause
+      h3 Next game in: 
+      h1#countdown
+
+      ul#scores 
+
+    script
+      include ../public/quiz.js
