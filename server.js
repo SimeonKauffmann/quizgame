@@ -83,6 +83,21 @@ let countdown = 5
 setInterval(()=>{
   io.to('lounge').emit('timer', countdown)
   countdown -= 1
+
+  /*
+  if(countdown === 5){
+    io.emit('enterLounge')
+  }
+  if(countdown === 0){
+    io.emit('enterPlayRoom')
+    countdown = 20
+  }
+  if(countdown % 5){
+    currentQuestion = pickaQuestion(questions)
+    io.emit('newQuestion', currentQuestion.question, currentQuestion.answers)
+  }
+  */
+
   if(countdown === 15){
     currentQuestion = pickaQuestion(questions)
     io.emit('newQuestion', currentQuestion.question, currentQuestion.answers)

@@ -14,7 +14,7 @@ pause.style.display = 'none'
 
 let points = 0
 
-let questionNumber = 1
+let questionNumber = 0
 
 const names = ["Banana", "Apple", "Orange", "Kiwi", "Pear", "Pineapple", "Mango", "Grape", "Peach"]
 let username = names[Math.floor(Math.random()*names.length)]
@@ -28,6 +28,7 @@ const buttonClick = (key)=>{
   for(i=0; i< buttons.length; i++){
     buttons[i].disabled = true
   }
+  // buttons.forEach(button => button.disabled = true)
 }
 
 socket.on('timer', (countdown)=>{
@@ -71,6 +72,7 @@ socket.on('newQuestion', (question, answers)=>{
     buttons[x].textContent = decodeHTML(answers[x])
     buttons[x].style.backgroundColor = ''
   }
+
 
   questionNumber += 1
   round.innerHTML = `This is question ${questionNumber} out of 3`
