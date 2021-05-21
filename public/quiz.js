@@ -10,17 +10,14 @@ const game = document.querySelector('#quiz')
 const pause = document.querySelector('#pause')
 const scoresList = document.getElementById("scores")
 
+
 pause.style.display = 'none'
 
 let points = 0
 
 let questionNumber = 0
 
-const names = ["Banana", "Apple", "Orange", "Kiwi", "Pear", "Pineapple", "Mango", "Grape", "Peach"]
-let username = names[Math.floor(Math.random()*names.length)]
-
-usernameDisplay.innerHTML = username
-
+let username = usernameDisplay.textContent
 
 const buttonClick = (key)=>{
   let answer = document.querySelector(`#${key}`).value
@@ -32,7 +29,7 @@ const buttonClick = (key)=>{
 }
 
 socket.on('timer', (countdown)=>{
-  countdownDisplay.innerHTML = countdown
+  countdownDisplay.innerHTML = countdown- 1
 })
 
 socket.on('enterLounge', ()=>{
@@ -45,7 +42,6 @@ socket.on('enterLounge', ()=>{
 })
 
 socket.on('usersScores', (users)=>{
-  console.log(users[0].user)
   for(y = 0; y < users.length; y++){
     let score = document.createElement("li")
     let text = document.createTextNode(`${users[y].user === username ? 'You' : users[y].user}: ${users[y].points}`)
@@ -98,5 +94,6 @@ socket.on('checkAnswer', (right, correctAnswer) => {
   pointsDisplay.textContent = points
 })
 
-
-
+socket.on('disconnect', ()=>{
+  window.location.href = "http://localhost:3000"
+})

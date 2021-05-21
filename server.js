@@ -30,11 +30,12 @@ const pickaQuestion = (questions)=>{
 }
 
 app.get('/quiz', (req, res) => {
-  if(!questions){
+  if(!req.query.username){
     res.redirect('/')
+    return
   }
   currentQuestion = pickaQuestion(questions)
-  res.status(200).render('quiz.pug')
+  res.status(200).render('quiz.pug', {username: req.query.username})
 })
 
 app.get('/', (req, res)=>{
@@ -47,7 +48,6 @@ app.get('/', (req, res)=>{
 io.of('/quiz').on('connection', (socket)=>{
   socket.leave('lounge')
   socket.join('playRoom')
-  
 })
 
 const users = []
@@ -57,8 +57,6 @@ io.of('/').on("connection", (socket)=>{
   socket.join('lounge')
   users.length = 0
 
-  currentQuestion = pickaQuestion(questions)
-  io.emit('newQuestion', currentQuestion.question, currentQuestion.answers)
 
   socket.on('answer', (answer)=>{
     if (answer === currentQuestion.correct_answer) return socket.emit('checkAnswer', true, currentQuestion.correct_answer)
@@ -72,12 +70,12 @@ io.of('/').on("connection", (socket)=>{
       socket.emit('usersScores', users) 
       users.length = 0
     }, 200)
-    
   })
+
   
 })
 
-let countdown = 5
+let countdown = 10
 
 
 setInterval(()=>{
@@ -98,6 +96,10 @@ setInterval(()=>{
   }
   */
 
+  if(countdown === 19){
+    currentQuestion = pickaQuestion(questions)
+    io.emit('newQuestion', currentQuestion.question, currentQuestion.answers)
+  }
   if(countdown === 15){
     currentQuestion = pickaQuestion(questions)
     io.emit('newQuestion', currentQuestion.question, currentQuestion.answers)
@@ -112,8 +114,6 @@ setInterval(()=>{
   if(countdown === 0){
     io.emit('enterPlayRoom')
     countdown = 20
-    currentQuestion = pickaQuestion(questions)
-    io.emit('newQuestion', currentQuestion.question, currentQuestion.answers)
   }
 }, 1000)
 

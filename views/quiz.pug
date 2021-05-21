@@ -8,6 +8,7 @@ html(lang="en")
     script(src="/socket.io/socket.io.js")
     title Awesome Quiz
   body 
+
     div#quiz
       p#question
       
@@ -16,7 +17,7 @@ html(lang="en")
       button(onclick=`buttonClick("key2")` id=`key2`)
       button(onclick=`buttonClick("key3")` id=`key3`)
 
-      h3#username
+      h3#username= username
 
       p#points 0
 
