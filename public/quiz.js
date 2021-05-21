@@ -15,7 +15,7 @@ pause.style.display = 'none'
 
 let points = 0
 
-let questionNumber = 0
+let questionNumber 
 
 let username = usernameDisplay.textContent
 
@@ -50,7 +50,7 @@ socket.on('usersScores', (users)=>{
   }
 })
 
-socket.on('newQuestion', (question, answers)=>{
+socket.on('newQuestion', (question, answers, number)=>{
   for(i=0; i< buttons.length; i++){
     buttons[i].disabled = false
   }
@@ -70,7 +70,7 @@ socket.on('newQuestion', (question, answers)=>{
   }
 
 
-  questionNumber += 1
+  questionNumber = number
   round.innerHTML = `This is question ${questionNumber} out of 3`
 })
 

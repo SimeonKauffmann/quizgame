@@ -98,15 +98,15 @@ setInterval(()=>{
 
   if(countdown === 19){
     currentQuestion = pickaQuestion(questions)
-    io.emit('newQuestion', currentQuestion.question, currentQuestion.answers)
+    io.emit('newQuestion', currentQuestion.question, currentQuestion.answers, 1)
   }
   if(countdown === 15){
     currentQuestion = pickaQuestion(questions)
-    io.emit('newQuestion', currentQuestion.question, currentQuestion.answers)
+    io.emit('newQuestion', currentQuestion.question, currentQuestion.answers, 2)
   }
   if(countdown === 10){
     currentQuestion = pickaQuestion(questions)
-    io.emit('newQuestion', currentQuestion.question, currentQuestion.answers)
+    io.emit('newQuestion', currentQuestion.question, currentQuestion.answers, 3)
   }
   if(countdown === 5){
     io.emit('enterLounge')
